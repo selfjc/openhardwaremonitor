@@ -9,7 +9,7 @@
 */
 
 using System;
-using System.Collections.Generic;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
 
@@ -20,12 +20,12 @@ namespace OpenHardwareMonitor.GUI {
 
   public class UnitManager {
 
-    private PersistentSettings settings;
+    private UISettings settings;
     private TemperatureUnit temperatureUnit;
 
-    public UnitManager(PersistentSettings settings) {
-      this.settings = settings;
-      this.temperatureUnit = (TemperatureUnit)settings.GetValue("TemperatureUnit",
+    public UnitManager(ISettings settings) {
+      this.settings = new UISettings(settings);
+      this.temperatureUnit = (TemperatureUnit)this.settings.GetValue("TemperatureUnit",
         (int)TemperatureUnit.Celsius);
     }
 

@@ -12,13 +12,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.HDD {
 
   [NamePrefix("")]
-  internal class GenericHarddisk : AbstractHarddrive {
+  internal class HDDGeneric : ATAStorage {
 
     private static readonly List<SmartAttribute> smartAttributes =
       new List<SmartAttribute> {
@@ -105,8 +105,8 @@ namespace OpenHardwareMonitor.Hardware.HDD {
                   "Temperature = Value + Offset.", 0) })
     };
 
-    public GenericHarddisk(ISmart smart, string name, string firmwareRevision, 
+    public HDDGeneric(IATASmart smart, string name, string firmwareRevision, 
       int index, ISettings settings)
-      : base(smart, name, firmwareRevision, index, smartAttributes, settings) {}
+      : base(smart, name, firmwareRevision, "hdd", index, smartAttributes, settings) {}
   }
 }

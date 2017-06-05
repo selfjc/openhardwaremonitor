@@ -10,6 +10,7 @@
 
 using System;
 using System.Globalization;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.ATI {
   internal sealed class ATIGPU : Hardware {

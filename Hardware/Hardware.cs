@@ -10,6 +10,7 @@
 
 using System;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware {
   internal abstract class Hardware : IHardware {
@@ -17,15 +18,14 @@ namespace OpenHardwareMonitor.Hardware {
     private readonly Identifier identifier;
     protected readonly string name;
     private string customName;
-    protected readonly ISettings settings;
+    protected readonly Settings settings;
     protected readonly ListSet<ISensor> active = new ListSet<ISensor>();
 
-    public Hardware(string name, Identifier identifier, ISettings settings) {
-      this.settings = settings;
+    protected Hardware(string name, Identifier identifier, ISettings settings) {
+      this.settings = new Settings(settings);
       this.identifier = identifier;
       this.name = name;
-      this.customName = settings.GetValue(
-        new Identifier(Identifier, "name").ToString(), name);
+      this.customName = this.settings.GetValue(Identifier + "name", name);
     }
 
     public IHardware[] SubHardware {
@@ -61,8 +61,7 @@ namespace OpenHardwareMonitor.Hardware {
           customName = value;
         else
           customName = name;
-        settings.SetValue(new Identifier(Identifier, "name").ToString(), 
-          customName);
+        settings.SetValue(Identifier +"name", customName);
       }
     }
 

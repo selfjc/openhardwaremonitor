@@ -49,7 +49,7 @@ namespace OpenHardwareMonitor.GUI {
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.okButton.Location = new System.Drawing.Point(269, 79);
+      this.okButton.Location = new System.Drawing.Point(337, 95);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -82,9 +82,10 @@ namespace OpenHardwareMonitor.GUI {
       this.label2.Location = new System.Drawing.Point(74, 46);
       this.label2.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(273, 13);
+      this.label2.Size = new System.Drawing.Size(182, 39);
       this.label2.TabIndex = 3;
-      this.label2.Text = "Copyright © 2009-2017 Michael Möller and contributors. ";
+      this.label2.Text = "Open Hardware Monitor Service\nVersion $VERSION$\nCopyright © 2017 Alexander Thulck" +
+  "e";
       // 
       // label3
       // 
@@ -92,20 +93,20 @@ namespace OpenHardwareMonitor.GUI {
       this.label3.Location = new System.Drawing.Point(74, 29);
       this.label3.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(127, 13);
+      this.label3.Size = new System.Drawing.Size(270, 13);
       this.label3.TabIndex = 4;
-      this.label3.Text = "Version 9.0.30729.1 Beta";
+      this.label3.Text = "Copyright © 2009-2017 Michael Möller and contributors.";
       // 
       // projectLinkLabel
       // 
       this.projectLinkLabel.AutoSize = true;
-      this.projectLinkLabel.Location = new System.Drawing.Point(164, 80);
-      this.projectLinkLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.projectLinkLabel.Location = new System.Drawing.Point(136, 100);
+      this.projectLinkLabel.Margin = new System.Windows.Forms.Padding(0);
       this.projectLinkLabel.Name = "projectLinkLabel";
-      this.projectLinkLabel.Size = new System.Drawing.Size(82, 13);
+      this.projectLinkLabel.Size = new System.Drawing.Size(162, 13);
       this.projectLinkLabel.TabIndex = 6;
       this.projectLinkLabel.TabStop = true;
-      this.projectLinkLabel.Text = "Project Website";
+      this.projectLinkLabel.Text = "Open Hardware Monitor Website";
       this.projectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
       // 
       // flowLayoutPanel1
@@ -121,8 +122,8 @@ namespace OpenHardwareMonitor.GUI {
       // licenseLinkLabel
       // 
       this.licenseLinkLabel.AutoSize = true;
-      this.licenseLinkLabel.Location = new System.Drawing.Point(25, 80);
-      this.licenseLinkLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+      this.licenseLinkLabel.Location = new System.Drawing.Point(10, 100);
+      this.licenseLinkLabel.Margin = new System.Windows.Forms.Padding(0);
       this.licenseLinkLabel.Name = "licenseLinkLabel";
       this.licenseLinkLabel.Size = new System.Drawing.Size(107, 13);
       this.licenseLinkLabel.TabIndex = 9;
@@ -136,7 +137,7 @@ namespace OpenHardwareMonitor.GUI {
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
-      this.ClientSize = new System.Drawing.Size(359, 115);
+      this.ClientSize = new System.Drawing.Size(427, 131);
       this.Controls.Add(this.licenseLinkLabel);
       this.Controls.Add(this.flowLayoutPanel1);
       this.Controls.Add(this.projectLinkLabel);

@@ -10,26 +10,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.GUI {
   public class SystemTray : IDisposable {
     private IComputer computer;
-    private PersistentSettings settings;
+    private UISettings settings;
     private UnitManager unitManager;
     private List<SensorNotifyIcon> list = new List<SensorNotifyIcon>();
     private bool mainIconEnabled = false;
     private NotifyIconAdv mainIcon;
 
-    public SystemTray(IComputer computer, PersistentSettings settings,
+    public SystemTray(IComputer computer, ISettings settings,
       UnitManager unitManager) 
     {
       this.computer = computer;
-      this.settings = settings;
+      this.settings = new UISettings(settings);
       this.unitManager = unitManager;
       computer.HardwareAdded += new HardwareEventHandler(HardwareAdded);
       computer.HardwareRemoved += new HardwareEventHandler(HardwareRemoved);
@@ -75,8 +73,7 @@ namespace OpenHardwareMonitor.GUI {
     }
 
     private void SensorAdded(ISensor sensor) {
-      if (settings.GetValue(new Identifier(sensor.Identifier, 
-        "tray").ToString(), false)) 
+      if (this.settings.GetValue(sensor.Identifier + "tray", false)) 
         Add(sensor, false);   
     }
 
@@ -107,9 +104,9 @@ namespace OpenHardwareMonitor.GUI {
       if (Contains(sensor)) {
         return;
       } else {        
-        list.Add(new SensorNotifyIcon(this, sensor, balloonTip, settings, unitManager));
+        list.Add(new SensorNotifyIcon(this, sensor, balloonTip, settings.InnerSettings, unitManager));
         UpdateMainIconVisibilty();
-        settings.SetValue(new Identifier(sensor.Identifier, "tray").ToString(), true);
+        settings.SetValue(sensor.Identifier + "tray", true);
       }
     }
 
@@ -119,10 +116,8 @@ namespace OpenHardwareMonitor.GUI {
 
     private void Remove(ISensor sensor, bool deleteConfig) {
       if (deleteConfig) {
-        settings.Remove(
-          new Identifier(sensor.Identifier, "tray").ToString());
-        settings.Remove(
-          new Identifier(sensor.Identifier, "traycolor").ToString());
+        settings.Remove(sensor.Identifier + "tray");
+        settings.Remove(sensor.Identifier + "traycolor");
       }
       SensorNotifyIcon instance = null;
       foreach (SensorNotifyIcon icon in list)

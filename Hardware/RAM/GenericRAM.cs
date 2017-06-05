@@ -9,6 +9,7 @@
 */
 
 using System.Runtime.InteropServices;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.RAM {
   internal class GenericRAM : Hardware {

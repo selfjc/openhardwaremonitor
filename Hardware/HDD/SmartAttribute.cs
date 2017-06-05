@@ -10,8 +10,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.HDD {
   internal class SmartAttribute {

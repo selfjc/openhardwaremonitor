@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
@@ -23,7 +23,7 @@ using OpenHardwareMonitor.Collections;
 namespace OpenHardwareMonitor.GUI {
   public class PlotPanel : UserControl {
 
-    private readonly PersistentSettings settings;
+    private readonly UISettings settings;
     private readonly UnitManager unitManager;
 
     private readonly Plot plot;
@@ -36,8 +36,8 @@ namespace OpenHardwareMonitor.GUI {
 
     private DateTime now;
 
-    public PlotPanel(PersistentSettings settings, UnitManager unitManager) {
-      this.settings = settings;
+    public PlotPanel(ISettings settings, UnitManager unitManager) {
+      this.settings = new UISettings(settings);
       this.unitManager = unitManager;
 
       this.model = CreatePlotModel();
@@ -70,7 +70,7 @@ namespace OpenHardwareMonitor.GUI {
 
       MenuItem stackedAxesMenuItem = new MenuItem("Stacked Axes");
       stackedAxes = new UserOption("stackedAxes", true,
-        stackedAxesMenuItem, settings);
+        stackedAxesMenuItem, settings.InnerSettings);
       stackedAxes.Changed += (sender, e) => {
         UpdateAxesPosition();
         InvalidatePlot();

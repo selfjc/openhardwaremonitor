@@ -22,6 +22,7 @@ namespace OpenHardwareMonitor.GUI {
 
     public ReportForm() {
       InitializeComponent();
+      sendButton.Enabled = false;
       try {
         titleLabel.Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold);      
         reportTextBox.Font = new Font(FontFamily.GenericMonospace,

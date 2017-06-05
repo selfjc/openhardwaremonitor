@@ -19,7 +19,7 @@ namespace OpenHardwareMonitor {
 
     [STAThread]
     public static void Main() {
-      #if !DEBUG
+#if false
         Application.ThreadException += 
           new ThreadExceptionEventHandler(Application_ThreadException);
         Application.SetUnhandledExceptionMode(
@@ -27,7 +27,7 @@ namespace OpenHardwareMonitor {
 
         AppDomain.CurrentDomain.UnhandledException += 
           new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-      #endif
+#endif
 
       if (!AllRequiredFilesAvailable())
         Environment.Exit(0);
@@ -58,7 +58,9 @@ namespace OpenHardwareMonitor {
     private static bool AllRequiredFilesAvailable() {
       if (!IsFileAvailable("Aga.Controls.dll"))
         return false;
-      if (!IsFileAvailable("OpenHardwareMonitorLib.dll"))
+      if (!IsFileAvailable("OpenHardwareMonitorCommonLib.dll"))
+        return false;
+      if (!IsFileAvailable("OpenHardwareMonitorClientLib.dll"))
         return false;
       if (!IsFileAvailable("OxyPlot.dll"))
         return false;

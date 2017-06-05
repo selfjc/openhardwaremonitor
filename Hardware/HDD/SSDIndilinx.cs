@@ -10,12 +10,14 @@
 	
 */
 
+using OpenHardwareMonitor.Common;
+
 namespace OpenHardwareMonitor.Hardware.HDD {
   using System.Collections.Generic;
 
   [NamePrefix(""), RequireSmart(0x01), RequireSmart(0x09), RequireSmart(0x0C), 
     RequireSmart(0xD1), RequireSmart(0xCE), RequireSmart(0xCF)]
-  internal class SSDIndilinx : AbstractHarddrive {
+  internal class SSDIndilinx : ATAStorage {
 
     private static readonly IEnumerable<SmartAttribute> smartAttributes =
       new List<SmartAttribute> {
@@ -44,9 +46,9 @@ namespace OpenHardwareMonitor.Hardware.HDD {
         new SmartAttribute(0xD4, SmartNames.SataErrorCountHandshake)
       };
 
-    public SSDIndilinx(ISmart smart, string name, string firmwareRevision, 
+    public SSDIndilinx(IATASmart smart, string name, string firmwareRevision, 
       int index, ISettings settings)
-      : base(smart, name, firmwareRevision, index, smartAttributes, settings) {}
+      : base(smart, name, firmwareRevision, "ssd", index, smartAttributes, settings) {}
   }
 }
 

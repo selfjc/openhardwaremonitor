@@ -10,22 +10,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class HardwareNode : Node {
 
-    private PersistentSettings settings;
+    private UISettings settings;
     private UnitManager unitManager;
     private IHardware hardware;
 
     private List<TypeNode> typeNodes = new List<TypeNode>();
 
-    public HardwareNode(IHardware hardware, PersistentSettings settings, 
+    public HardwareNode(IHardware hardware, ISettings settings, 
       UnitManager unitManager) : base() 
     {
-      this.settings = settings;
+      this.settings = new UISettings(settings);
       this.unitManager = unitManager;
       this.hardware = hardware;
       this.Image = HardwareTypeImage.Instance.GetImage(hardware.HardwareType);
@@ -88,7 +87,7 @@ namespace OpenHardwareMonitor.GUI {
       while (i < node.Nodes.Count &&
         ((SensorNode)node.Nodes[i]).Sensor.Index < sensor.Index)
         i++;
-      SensorNode sensorNode = new SensorNode(sensor, settings, unitManager);
+      SensorNode sensorNode = new SensorNode(sensor, settings.InnerSettings, unitManager);
       sensorNode.PlotSelectionChanged += SensorPlotSelectionChanged;
       node.Nodes.Insert(i, sensorNode);
     }

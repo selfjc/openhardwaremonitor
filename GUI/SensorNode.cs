@@ -10,15 +10,13 @@
 
 using System;
 using System.Drawing;
-using System.Collections.Generic;
-using OpenHardwareMonitor.Hardware;
-using OpenHardwareMonitor.Utilities;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class SensorNode : Node {
     
     private ISensor sensor;
-    private PersistentSettings settings;
+    private UISettings settings;
     private UnitManager unitManager;
     private string format;
     private bool plot = false;
@@ -36,10 +34,10 @@ namespace OpenHardwareMonitor.GUI {
         return "-";
     }
 
-    public SensorNode(ISensor sensor, PersistentSettings settings, 
+    public SensorNode(ISensor sensor, ISettings settings, 
       UnitManager unitManager) : base() {      
       this.sensor = sensor;
-      this.settings = settings;
+      this.settings = new UISettings(settings);
       this.unitManager = unitManager;
       switch (sensor.SensorType) {
         case SensorType.Voltage: format = "{0:F3} V"; break;
@@ -56,16 +54,14 @@ namespace OpenHardwareMonitor.GUI {
         case SensorType.Factor: format = "{0:F3}"; break;
       }
 
-      bool hidden = settings.GetValue(new Identifier(sensor.Identifier, 
-        "hidden").ToString(), sensor.IsDefaultHidden);
+      bool hidden = this.settings.GetValue(sensor.Identifier + "hidden", sensor.IsDefaultHidden);
       base.IsVisible = !hidden;
 
-      this.Plot = settings.GetValue(new Identifier(sensor.Identifier, 
-        "plot").ToString(), false);
+      this.Plot = this.settings.GetValue(sensor.Identifier + "plot", false);
 
-      string id = new Identifier(sensor.Identifier, "penColor").ToString();
-      if (settings.Contains(id))
-        this.PenColor = settings.GetValue(id, Color.Black);
+      Identifier id = sensor.Identifier + "penColor";
+      if (this.settings.Contains(id))
+        this.PenColor = this.settings.GetValue(id, Color.Black);
     }
 
     public override string Text {
@@ -77,8 +73,7 @@ namespace OpenHardwareMonitor.GUI {
       get { return base.IsVisible; }
       set { 
         base.IsVisible = value;
-        settings.SetValue(new Identifier(sensor.Identifier,
-          "hidden").ToString(), !value);
+        settings.SetValue(sensor.Identifier + "hidden", !value);
       }
     }
 
@@ -87,7 +82,7 @@ namespace OpenHardwareMonitor.GUI {
       set {
         penColor = value;
 
-        string id = new Identifier(sensor.Identifier, "penColor").ToString();
+        Identifier id = sensor.Identifier + "penColor";
         if (value.HasValue)
           settings.SetValue(id, value.Value);
         else
@@ -102,8 +97,7 @@ namespace OpenHardwareMonitor.GUI {
       get { return plot; }
       set { 
         plot = value;
-        settings.SetValue(new Identifier(sensor.Identifier, "plot").ToString(), 
-          value);
+        settings.SetValue(sensor.Identifier + "plot", value);
         if (PlotSelectionChanged != null)
           PlotSelectionChanged(this, null);
       }

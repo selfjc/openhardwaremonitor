@@ -15,6 +15,7 @@ using System.IO.Ports;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.Heatmaster {
   internal class Heatmaster : Hardware, IDisposable {

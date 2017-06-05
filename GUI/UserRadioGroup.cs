@@ -9,9 +9,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Utilities;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class UserRadioGroup {
@@ -19,14 +18,14 @@ namespace OpenHardwareMonitor.GUI {
     private int value;
     private MenuItem[] menuItems;
     private event EventHandler changed;
-    private PersistentSettings settings;
+    private UISettings settings;
 
     public UserRadioGroup(string name, int value,
-      MenuItem[] menuItems, PersistentSettings settings) {
-      this.settings = settings;
+      MenuItem[] menuItems, ISettings settings) {
+      this.settings = new UISettings(settings);
       this.name = name;
       if (name != null)
-        this.value = settings.GetValue(name, value);
+        this.value = this.settings.GetValue(name, value);
       else
         this.value = value;
       this.menuItems = menuItems;

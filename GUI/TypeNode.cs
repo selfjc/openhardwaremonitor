@@ -9,8 +9,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class TypeNode : Node {

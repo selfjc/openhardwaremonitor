@@ -10,12 +10,10 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Hardware;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public partial class ParameterForm : Form {
@@ -114,9 +112,9 @@ namespace OpenHardwareMonitor.GUI {
     private void okButton_Click(object sender, EventArgs e) {
       foreach (ParameterRow row in parameterRows) {
         if (row.Default) {
-          row.parameter.IsDefault = true;
+          row.parameter.SetDefault();
         } else {
-          row.parameter.Value = row.Value;
+          row.parameter.SetValue(row.Value);
         }
       }
     }

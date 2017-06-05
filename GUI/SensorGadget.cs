@@ -14,7 +14,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.IO;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class SensorGadget : Gadget {
@@ -46,7 +46,7 @@ namespace OpenHardwareMonitor.GUI {
     private IDictionary<IHardware, IList<ISensor>> sensors =
       new SortedDictionary<IHardware, IList<ISensor>>(new HardwareComparer());
 
-    private PersistentSettings settings;
+    private UISettings settings;
     private UserOption hardwareNames;
     private UserOption alwaysOnTop;
     private UserOption lockPositionAndSize;
@@ -58,11 +58,11 @@ namespace OpenHardwareMonitor.GUI {
     private StringFormat trimStringFormat;
     private StringFormat alignRightStringFormat;
 
-    public SensorGadget(IComputer computer, PersistentSettings settings, 
+    public SensorGadget(IComputer computer, ISettings settings, 
       UnitManager unitManager) 
     {
       this.unitManager = unitManager;
-      this.settings = settings;
+      this.settings = new UISettings(settings);
       computer.HardwareAdded += new HardwareEventHandler(HardwareAdded);
       computer.HardwareRemoved += new HardwareEventHandler(HardwareRemoved);      
 
@@ -116,11 +116,11 @@ namespace OpenHardwareMonitor.GUI {
       }
 
       this.Location = new Point(
-        settings.GetValue("sensorGadget.Location.X", 100),
-        settings.GetValue("sensorGadget.Location.Y", 100)); 
+        this.settings.GetValue("sensorGadget.Location.X", 100),
+        this.settings.GetValue("sensorGadget.Location.Y", 100)); 
       LocationChanged += delegate(object sender, EventArgs e) {
-        settings.SetValue("sensorGadget.Location.X", Location.X);
-        settings.SetValue("sensorGadget.Location.Y", Location.Y);
+        this.settings.SetValue("sensorGadget.Location.X", Location.X);
+        this.settings.SetValue("sensorGadget.Location.Y", Location.Y);
       };
 
       // get the custom to default dpi ratio
@@ -128,8 +128,8 @@ namespace OpenHardwareMonitor.GUI {
         scale = b.HorizontalResolution / 96.0f;
       }
 
-      SetFontSize(settings.GetValue("sensorGadget.FontSize", 7.5f));
-      Resize(settings.GetValue("sensorGadget.Width", Size.Width));
+      SetFontSize(this.settings.GetValue("sensorGadget.FontSize", 7.5f));
+      Resize(this.settings.GetValue("sensorGadget.Width", Size.Width));
       
       ContextMenu contextMenu = new ContextMenu();
       MenuItem hardwareNamesItem = new MenuItem("Hardware Names");
@@ -149,7 +149,7 @@ namespace OpenHardwareMonitor.GUI {
         item.Checked = fontSize == size;
         item.Click += delegate(object sender, EventArgs e) {
           SetFontSize(size);
-          settings.SetValue("sensorGadget.FontSize", size);
+          this.settings.SetValue("sensorGadget.FontSize", size);
           foreach (MenuItem mi in fontSizeMenu.MenuItems)
             mi.Checked = mi == item;
         };
@@ -164,14 +164,14 @@ namespace OpenHardwareMonitor.GUI {
       contextMenu.MenuItems.Add(alwaysOnTopItem);
       MenuItem opacityMenu = new MenuItem("Opacity");
       contextMenu.MenuItems.Add(opacityMenu);
-      Opacity = (byte)settings.GetValue("sensorGadget.Opacity", 255);      
+      Opacity = (byte)this.settings.GetValue("sensorGadget.Opacity", 255);      
       for (int i = 0; i < 5; i++) {
         MenuItem item = new MenuItem((20 * (i + 1)).ToString() + " %");
         byte o = (byte)(51 * (i + 1));
         item.Checked = Opacity == o;
         item.Click += delegate(object sender, EventArgs e) {
           Opacity = o;
-          settings.SetValue("sensorGadget.Opacity", Opacity);
+          this.settings.SetValue("sensorGadget.Opacity", Opacity);
           foreach (MenuItem mi in opacityMenu.MenuItems)
             mi.Checked = mi == item;          
         };
@@ -211,7 +211,7 @@ namespace OpenHardwareMonitor.GUI {
       };
 
       SizeChanged += delegate(object sender, EventArgs e) {
-        settings.SetValue("sensorGadget.Width", Size.Width);
+        this.settings.SetValue("sensorGadget.Width", Size.Width);
         Redraw();
       };
 
@@ -298,8 +298,7 @@ namespace OpenHardwareMonitor.GUI {
     }
 
     private void SensorAdded(ISensor sensor) {
-      if (settings.GetValue(new Identifier(sensor.Identifier,
-        "gadget").ToString(), false)) 
+      if (settings.GetValue(sensor.Identifier + "gadget", false)) 
         Add(sensor);
     }
 
@@ -338,8 +337,7 @@ namespace OpenHardwareMonitor.GUI {
            list[i].Index < sensor.Index))) i++;
         list.Insert(i, sensor);
 
-        settings.SetValue(
-          new Identifier(sensor.Identifier, "gadget").ToString(), true);
+        settings.SetValue(sensor.Identifier + "gadget", true);
         
         Resize();
       }
@@ -351,7 +349,7 @@ namespace OpenHardwareMonitor.GUI {
 
     private void Remove(ISensor sensor, bool deleteConfig) {
       if (deleteConfig) 
-        settings.Remove(new Identifier(sensor.Identifier, "gadget").ToString());
+        settings.Remove(sensor.Identifier + "gadget");
 
       foreach (KeyValuePair<IHardware, IList<ISensor>> keyValue in sensors)
         if (keyValue.Value.Contains(sensor)) {

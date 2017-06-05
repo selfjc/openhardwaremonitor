@@ -11,6 +11,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.CPU {
   internal sealed class IntelCPU : GenericCPU {

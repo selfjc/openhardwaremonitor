@@ -5,10 +5,11 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
   Copyright (C) 2009-2017 Michael Möller <mmoeller@openhardwaremonitor.org>
- 
+  Copyright (C) 2017 Alexander Thulcke <alexth4ef9@gmail.com>
+
 */
 
 using System.Reflection;
 
 [assembly: AssemblyVersion("0.8.0.2")]
-[assembly: AssemblyInformationalVersion("0.8.0.2 Alpha")]
+[assembly: AssemblyInformationalVersion("0.8.0.2 service")]

@@ -48,7 +48,7 @@ namespace OpenHardwareMonitor.GUI {
       this.mainMenu = new System.Windows.Forms.MainMenu(this.components);
       this.fileMenuItem = new System.Windows.Forms.MenuItem();
       this.saveReportMenuItem = new System.Windows.Forms.MenuItem();
-      this.sumbitReportMenuItem = new System.Windows.Forms.MenuItem();
+      this.submitReportMenuItem = new System.Windows.Forms.MenuItem();
       this.MenuItem2 = new System.Windows.Forms.MenuItem();
       this.resetMenuItem = new System.Windows.Forms.MenuItem();
       this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -207,7 +207,7 @@ namespace OpenHardwareMonitor.GUI {
       this.fileMenuItem.Index = 0;
       this.fileMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.saveReportMenuItem,
-            this.sumbitReportMenuItem,
+            this.submitReportMenuItem,
             this.MenuItem2,
             this.resetMenuItem,
             this.menuItem5,
@@ -223,9 +223,9 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // sumbitReportMenuItem
       // 
-      this.sumbitReportMenuItem.Index = 1;
-      this.sumbitReportMenuItem.Text = "Submit Report...";
-      this.sumbitReportMenuItem.Click += new System.EventHandler(this.sumbitReportMenuItem_Click);
+      this.submitReportMenuItem.Index = 1;
+      this.submitReportMenuItem.Text = "Submit Report...";
+      this.submitReportMenuItem.Click += new System.EventHandler(this.sumbitReportMenuItem_Click);
       // 
       // MenuItem2
       // 
@@ -673,7 +673,7 @@ namespace OpenHardwareMonitor.GUI {
       this.Menu = this.mainMenu;
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-      this.Text = "Open Hardware Monitor";
+      this.Text = "Open Hardware Monitor Viewer";
       this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
       this.Load += new System.EventHandler(this.MainForm_Load);
       this.ResizeEnd += new System.EventHandler(this.MainForm_MoveOrResize);
@@ -725,7 +725,7 @@ namespace OpenHardwareMonitor.GUI {
     private System.Windows.Forms.MenuItem webMenuItemSeparator;
     private System.Windows.Forms.MenuItem celsiusMenuItem;
     private System.Windows.Forms.MenuItem fahrenheitMenuItem;
-    private System.Windows.Forms.MenuItem sumbitReportMenuItem;
+    private System.Windows.Forms.MenuItem submitReportMenuItem;
     private System.Windows.Forms.MenuItem MenuItem2;
     private System.Windows.Forms.MenuItem resetMinMaxMenuItem;
     private System.Windows.Forms.MenuItem MenuItem3;

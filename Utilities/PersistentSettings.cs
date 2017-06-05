@@ -9,17 +9,15 @@
 */
 
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor {
   public class PersistentSettings : ISettings {
 
-    private IDictionary<string, string> settings = 
+    private IDictionary<string, string> settings =
       new Dictionary<string, string>();
 
     public void Load(string fileName) {
@@ -46,14 +44,14 @@ namespace OpenHardwareMonitor {
       XmlNodeList list = doc.GetElementsByTagName("appSettings");
       foreach (XmlNode node in list) {
         XmlNode parent = node.ParentNode;
-        if (parent != null && parent.Name == "configuration" && 
+        if (parent != null && parent.Name == "configuration" &&
           parent.ParentNode is XmlDocument) {
           foreach (XmlNode child in node.ChildNodes) {
             if (child.Name == "add") {
               XmlAttributeCollection attributes = child.Attributes;
               XmlAttribute keyAttribute = attributes["key"];
               XmlAttribute valueAttribute = attributes["value"];
-              if (keyAttribute != null && valueAttribute != null && 
+              if (keyAttribute != null && valueAttribute != null &&
                 keyAttribute.Value != null) {
                 settings.Add(keyAttribute.Value, valueAttribute.Value);
               }
@@ -96,7 +94,7 @@ namespace OpenHardwareMonitor {
         } catch { }
       }
 
-      using (var stream = new FileStream(fileName, 
+      using (var stream = new FileStream(fileName,
         FileMode.Create, FileAccess.Write))
       {
         stream.Write(file, 0, file.Length);
@@ -125,72 +123,6 @@ namespace OpenHardwareMonitor {
 
     public void Remove(string name) {
       settings.Remove(name);
-    }
-
-    public void SetValue(string name, int value) {
-      settings[name] = value.ToString();
-    }
-
-    public int GetValue(string name, int value) {
-      string str;
-      if (settings.TryGetValue(name, out str)) {
-        int parsedValue;
-        if (int.TryParse(str, out parsedValue))
-          return parsedValue;
-        else
-          return value;
-      } else {
-        return value;
-      }
-    }
-
-    public void SetValue(string name, float value) {
-      settings[name] = value.ToString(CultureInfo.InvariantCulture);
-    }
-
-    public float GetValue(string name, float value) {
-      string str;
-      if (settings.TryGetValue(name, out str)) {
-        float parsedValue;
-        if (float.TryParse(str, NumberStyles.Float, 
-          CultureInfo.InvariantCulture, out parsedValue))
-          return parsedValue;
-        else
-          return value;
-      } else {
-        return value;
-      }
-    }
-
-    public void SetValue(string name, bool value) {
-      settings[name] = value ? "true" : "false";
-    }
-
-    public bool GetValue(string name, bool value) {
-      string str;
-      if (settings.TryGetValue(name, out str)) {
-        return str == "true";
-      } else {
-        return value;
-      }
-    }
-
-    public void SetValue(string name, Color color) {
-      settings[name] = color.ToArgb().ToString("X8");
-    }
-
-    public Color GetValue(string name, Color value) {
-      string str;
-      if (settings.TryGetValue(name, out str)) {
-        int parsedValue;
-        if (int.TryParse(str, NumberStyles.HexNumber,
-          CultureInfo.InvariantCulture, out parsedValue))
-          return Color.FromArgb(parsedValue);
-        else
-          return value;
-      } else {
-        return value;
-      }
     }
   }
 }

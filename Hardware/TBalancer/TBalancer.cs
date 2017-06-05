@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.TBalancer {
   internal class TBalancer : Hardware {
@@ -132,7 +133,7 @@ namespace OpenHardwareMonitor.Hardware.TBalancer {
         if (miniNGFans[number * 2 + i] == null)
           miniNGFans[number * 2 + i] = 
             new Sensor("miniNG #" + (number + 1) + " Fan Channel " + (i + 1),
-            4 + number * 2 + i, SensorType.Fan, this, settings);
+            4 + number * 2 + i, SensorType.Fan, this, settings.InnerSettings);
         
         Sensor sensor = miniNGFans[number * 2 + i];
 
@@ -208,7 +209,7 @@ namespace OpenHardwareMonitor.Hardware.TBalancer {
             fans[i] = new Sensor("Fan Channel " + i, i, SensorType.Fan,
               this, new [] { new ParameterDescription("MaxRPM", 
                   "Maximum revolutions per minute (RPM) of the fan.", maxRPM)
-              }, settings);
+              }, settings.InnerSettings);
 
           float value;
           if ((data[136] & (1 << i)) == 0)  // pwm mode

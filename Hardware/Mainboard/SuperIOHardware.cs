@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using OpenHardwareMonitor.Hardware.LPC;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.Mainboard {
   internal sealed class SuperIOHardware : Hardware {

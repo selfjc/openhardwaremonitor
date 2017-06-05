@@ -13,14 +13,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
-using System.Reflection;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware {
 
   public class Computer : IComputer {
 
     private readonly List<IGroup> groups = new List<IGroup>();
-    private readonly ISettings settings;
+    private readonly Settings settings;
 
     private SMBIOS smbios;
 
@@ -33,12 +33,11 @@ namespace OpenHardwareMonitor.Hardware {
     private bool fanControllerEnabled;
     private bool hddEnabled;    
 
-    public Computer() {
-      this.settings = new Settings();
+    public Computer() : this(null) {      
     }
 
     public Computer(ISettings settings) {
-      this.settings = settings ?? new Settings();
+      this.settings = new Settings(settings ?? new EmptySettings());
     }
 
     private void Add(IGroup group) {
@@ -85,26 +84,26 @@ namespace OpenHardwareMonitor.Hardware {
       Opcode.Open();
 
       if (mainboardEnabled)
-        Add(new Mainboard.MainboardGroup(smbios, settings));
+        Add(new Mainboard.MainboardGroup(smbios, settings.InnerSettings));
       
       if (cpuEnabled)
-        Add(new CPU.CPUGroup(settings));
+        Add(new CPU.CPUGroup(settings.InnerSettings));
 
       if (ramEnabled)
-        Add(new RAM.RAMGroup(smbios, settings));
+        Add(new RAM.RAMGroup(smbios, settings.InnerSettings));
 
       if (gpuEnabled) {
-        Add(new ATI.ATIGroup(settings));
-        Add(new Nvidia.NvidiaGroup(settings));
+        Add(new ATI.ATIGroup(settings.InnerSettings));
+        Add(new Nvidia.NvidiaGroup(settings.InnerSettings));
       }
 
       if (fanControllerEnabled) {
-        Add(new TBalancer.TBalancerGroup(settings));
-        Add(new Heatmaster.HeatmasterGroup(settings));
+        Add(new TBalancer.TBalancerGroup(settings.InnerSettings));
+        Add(new Heatmaster.HeatmasterGroup(settings.InnerSettings));
       }
 
       if (hddEnabled)
-        Add(new HDD.HarddriveGroup(settings));
+        Add(new HDD.HarddriveGroup(settings.InnerSettings));
 
       open = true;
     }
@@ -116,7 +115,7 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != mainboardEnabled) {
           if (value)
-            Add(new Mainboard.MainboardGroup(smbios, settings));
+            Add(new Mainboard.MainboardGroup(smbios, settings.InnerSettings));
           else
             RemoveType<Mainboard.MainboardGroup>();
         }
@@ -131,7 +130,7 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != cpuEnabled) {
           if (value)
-            Add(new CPU.CPUGroup(settings));
+            Add(new CPU.CPUGroup(settings.InnerSettings));
           else
             RemoveType<CPU.CPUGroup>();
         }
@@ -146,7 +145,7 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != ramEnabled) {
           if (value)
-            Add(new RAM.RAMGroup(smbios, settings));
+            Add(new RAM.RAMGroup(smbios, settings.InnerSettings));
           else
             RemoveType<RAM.RAMGroup>();
         }
@@ -161,8 +160,8 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != gpuEnabled) {
           if (value) {
-            Add(new ATI.ATIGroup(settings));
-            Add(new Nvidia.NvidiaGroup(settings));
+            Add(new ATI.ATIGroup(settings.InnerSettings));
+            Add(new Nvidia.NvidiaGroup(settings.InnerSettings));
           } else {
             RemoveType<ATI.ATIGroup>();
             RemoveType<Nvidia.NvidiaGroup>();
@@ -179,8 +178,8 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != fanControllerEnabled) {
           if (value) {
-            Add(new TBalancer.TBalancerGroup(settings));
-            Add(new Heatmaster.HeatmasterGroup(settings));
+            Add(new TBalancer.TBalancerGroup(settings.InnerSettings));
+            Add(new Heatmaster.HeatmasterGroup(settings.InnerSettings));
           } else {
             RemoveType<TBalancer.TBalancerGroup>();
             RemoveType<Heatmaster.HeatmasterGroup>();
@@ -197,7 +196,7 @@ namespace OpenHardwareMonitor.Hardware {
       set {
         if (open && value != hddEnabled) {
           if (value)
-            Add(new HDD.HarddriveGroup(settings));
+            Add(new HDD.HarddriveGroup(settings.InnerSettings));
           else
             RemoveType<HDD.HarddriveGroup>();
         }
@@ -366,7 +365,7 @@ namespace OpenHardwareMonitor.Hardware {
 
     public event HardwareEventHandler HardwareAdded;
     public event HardwareEventHandler HardwareRemoved;
-
+    
     public void Accept(IVisitor visitor) {
       if (visitor == null)
         throw new ArgumentNullException("visitor");
@@ -377,21 +376,6 @@ namespace OpenHardwareMonitor.Hardware {
       foreach (IGroup group in groups)
         foreach (IHardware hardware in group.Hardware) 
           hardware.Accept(visitor);
-    }
-
-    private class Settings : ISettings {
-
-      public bool Contains(string name) {
-        return false;
-      }
-
-      public void SetValue(string name, string value) { }
-
-      public string GetValue(string name, string value) {
-        return value;
-      }
-
-      public void Remove(string name) { }
     }
   }
 }

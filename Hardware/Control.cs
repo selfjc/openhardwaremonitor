@@ -9,7 +9,7 @@
 */
 
 using System;
-using System.Globalization;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware {
 
@@ -18,7 +18,7 @@ namespace OpenHardwareMonitor.Hardware {
   internal class Control : IControl {
 
     private readonly Identifier identifier;
-    private readonly ISettings settings;
+    private readonly Settings settings;
     private ControlMode mode;
     private float softwareValue;
     private float minSoftwareValue;
@@ -27,29 +27,13 @@ namespace OpenHardwareMonitor.Hardware {
     public Control(ISensor sensor, ISettings settings, float minSoftwareValue,
       float maxSoftwareValue) 
     {
-      this.identifier = new Identifier(sensor.Identifier, "control");
-      this.settings = settings;
+      this.identifier = sensor.Identifier + "control";
+      this.settings = new Settings(settings);
       this.minSoftwareValue = minSoftwareValue;
       this.maxSoftwareValue = maxSoftwareValue;
 
-      if (!float.TryParse(settings.GetValue(
-          new Identifier(identifier, "value").ToString(), "0"),
-        NumberStyles.Float, CultureInfo.InvariantCulture,
-        out this.softwareValue)) 
-      {
-        this.softwareValue = 0;
-      }
-      int mode;
-      if (!int.TryParse(settings.GetValue(
-          new Identifier(identifier, "mode").ToString(),
-          ((int)ControlMode.Undefined).ToString(CultureInfo.InvariantCulture)),
-        NumberStyles.Integer, CultureInfo.InvariantCulture,
-        out mode)) 
-      {
-        this.mode = ControlMode.Undefined;
-      } else {
-        this.mode = (ControlMode)mode;
-      }
+      this.softwareValue = this.settings.GetValue(identifier + "value", 0f);
+      this.mode = (ControlMode)this.settings.GetValue(identifier + "mode", (int)ControlMode.Undefined);
     }
 
     public Identifier Identifier {
@@ -67,8 +51,7 @@ namespace OpenHardwareMonitor.Hardware {
           mode = value;
           if (ControlModeChanged != null)
             ControlModeChanged(this);
-          this.settings.SetValue(new Identifier(identifier, "mode").ToString(),
-            ((int)mode).ToString(CultureInfo.InvariantCulture));
+          settings.SetValue(identifier + "mode", (int)mode);
         }
       }
     }
@@ -78,13 +61,11 @@ namespace OpenHardwareMonitor.Hardware {
         return softwareValue;
       }
       private set {
-        if (softwareValue != value) {
+        if (Math.Abs(softwareValue - value) > float.Epsilon) {
           softwareValue = value;
           if (SoftwareControlValueChanged != null)
             SoftwareControlValueChanged(this);
-          this.settings.SetValue(new Identifier(identifier,
-            "value").ToString(),
-            value.ToString(CultureInfo.InvariantCulture));
+          settings.SetValue(identifier + "value", value);
         }
       }
     }

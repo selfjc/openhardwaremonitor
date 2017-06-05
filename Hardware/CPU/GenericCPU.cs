@@ -9,12 +9,10 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.CPU {
   internal class GenericCPU : Hardware {

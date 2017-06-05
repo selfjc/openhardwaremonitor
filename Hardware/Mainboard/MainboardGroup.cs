@@ -8,6 +8,8 @@
 	
 */
 
+using OpenHardwareMonitor.Common;
+
 namespace OpenHardwareMonitor.Hardware.Mainboard {
   internal class MainboardGroup : IGroup {
 

@@ -13,12 +13,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using OpenHardwareMonitor.Hardware;
+using System.Reflection;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Utilities {
   public class Logger {
 
-    private const string fileNameFormat = 
+    private const string fileNameFormat =
       "OpenHardwareMonitorLog-{0:yyyy-MM-dd}.csv";
 
     private readonly IComputer computer;
@@ -33,7 +34,7 @@ namespace OpenHardwareMonitor.Utilities {
     public Logger(IComputer computer) {
       this.computer = computer;
       this.computer.HardwareAdded += HardwareAdded;
-      this.computer.HardwareRemoved += HardwareRemoved;      
+      this.computer.HardwareRemoved += HardwareRemoved;
     }
 
     private void HardwareRemoved(IHardware hardware) {
@@ -59,7 +60,7 @@ namespace OpenHardwareMonitor.Utilities {
         return;
 
       for (int i = 0; i < sensors.Length; i++) {
-        if (sensor.Identifier.ToString() == identifiers[i])
+        if (sensor.Identifier == identifiers[i])
           sensors[i] = sensor;
       }
     }
@@ -75,8 +76,10 @@ namespace OpenHardwareMonitor.Utilities {
     }
 
     private static string GetFileName(DateTime date) {
-      return AppDomain.CurrentDomain.BaseDirectory +
-        Path.DirectorySeparatorChar + string.Format(fileNameFormat, date);
+      string folderName = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        Assembly.GetExecutingAssembly().GetName().Name);
+      return Path.Combine(folderName, string.Format(fileNameFormat, date));
     }
 
     private bool OpenExistingLogFile() {
@@ -85,12 +88,12 @@ namespace OpenHardwareMonitor.Utilities {
 
       try {
         String line;
-        using (StreamReader reader = new StreamReader(fileName)) 
-          line = reader.ReadLine(); 
-       
+        using (StreamReader reader = new StreamReader(fileName))
+          line = reader.ReadLine();
+
         if (string.IsNullOrEmpty(line))
           return false;
-        
+
         identifiers = line.Split(',').Skip(1).ToArray();
       } catch {
         identifiers = null;
@@ -105,7 +108,7 @@ namespace OpenHardwareMonitor.Utilities {
       sensors = new ISensor[identifiers.Length];
       SensorVisitor visitor = new SensorVisitor(sensor => {
         for (int i = 0; i < identifiers.Length; i++)
-          if (sensor.Identifier.ToString() == identifiers[i])
+          if (sensor.Identifier == identifiers[i])
             sensors[i] = sensor;
       });
       visitor.VisitComputer(computer);
@@ -146,11 +149,11 @@ namespace OpenHardwareMonitor.Utilities {
 
     public TimeSpan LoggingInterval { get; set; }
 
-    public void Log() {      
+    public void Log() {
       var now = DateTime.Now;
 
       if (lastLoggedTime + LoggingInterval - new TimeSpan(5000000) > now)
-        return;      
+        return;
 
       if (day != now.Date || !File.Exists(fileName)) {
         day = now.Date;

@@ -11,11 +11,12 @@
 
 using System.Collections.Generic;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.HDD {
 
   [NamePrefix(""), RequireSmart(0xAB), RequireSmart(0xB1)]
-  internal class SSDSandforce : AbstractHarddrive {
+  internal class SSDSandforce : ATAStorage {
 
     private static readonly IEnumerable<SmartAttribute> smartAttributes =
       new List<SmartAttribute> {
@@ -53,9 +54,9 @@ namespace OpenHardwareMonitor.Hardware.HDD {
 
     private Sensor writeAmplification;
 
-    public SSDSandforce(ISmart smart, string name, string firmwareRevision, 
+    public SSDSandforce(IATASmart smart, string name, string firmwareRevision, 
       int index, ISettings settings) 
-      : base(smart, name, firmwareRevision,  index, smartAttributes, settings) 
+      : base(smart, name, firmwareRevision, "ssd", index, smartAttributes, settings) 
     {
       this.writeAmplification = new Sensor("Write Amplification", 1, 
         SensorType.Factor, this, settings);    

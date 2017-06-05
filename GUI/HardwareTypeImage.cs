@@ -11,7 +11,7 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class HardwareTypeImage {
@@ -58,6 +58,9 @@ namespace OpenHardwareMonitor.GUI {
             break;
           case HardwareType.RAM:
             image = Utilities.EmbeddedResources.GetImage("ram.png");
+            break;
+          case HardwareType.Aquaero:
+            image = Utilities.EmbeddedResources.GetImage("bigng.png");
             break;
           default:
             image = new Bitmap(1, 1);

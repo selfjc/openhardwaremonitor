@@ -14,6 +14,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware {
 
@@ -31,11 +32,13 @@ namespace OpenHardwareMonitor.Hardware {
     private float? maxValue;
     private readonly RingCollection<SensorValue> 
       values = new RingCollection<SensorValue>();
-    private readonly ISettings settings;
+    private readonly Settings settings;
     private IControl control;
     
     private float sum;
     private int count;
+    
+    private bool enableSensorHistory;
    
     public Sensor(string name, int index, SensorType sensorType,
       Hardware hardware, ISettings settings) : 
@@ -61,11 +64,12 @@ namespace OpenHardwareMonitor.Hardware {
         parameters[i] = new Parameter(parameterDescriptions[i], this, settings);
       this.parameters = parameters;
 
-      this.settings = settings;
+      this.settings = new Settings(settings);
       this.defaultName = name; 
-      this.name = settings.GetValue(
-        new Identifier(Identifier, "name").ToString(), name);
+      this.name = this.settings.GetValue(Identifier + "name", name);
 
+      enableSensorHistory = !this.settings.GetValue("DisableSensorHistory", false);
+      
       GetSensorValuesFromSettings();      
 
       hardware.Closing += delegate(IHardware h) {
@@ -74,48 +78,18 @@ namespace OpenHardwareMonitor.Hardware {
     }
 
     private void SetSensorValuesToSettings() {
-      using (MemoryStream m = new MemoryStream()) {
-        using (GZipStream c = new GZipStream(m, CompressionMode.Compress))
-        using (BufferedStream b = new BufferedStream(c, 65536))
-        using (BinaryWriter writer = new BinaryWriter(b)) {
-          long t = 0;
-          foreach (SensorValue sensorValue in values) {
-            long v = sensorValue.Time.ToBinary();
-            writer.Write(v - t);
-            t = v;
-            writer.Write(sensorValue.Value);
-          }
-          writer.Flush();
-        }
-        settings.SetValue(new Identifier(Identifier, "values").ToString(),
-          Convert.ToBase64String(m.ToArray()));
-      }
+      settings.SetValueCompressed(Identifier + "values", SensorValue.Pack(values));
     }
 
     private void GetSensorValuesFromSettings() {
-      string name = new Identifier(Identifier, "values").ToString();
-      string s = settings.GetValue(name, null);
-
+      string name = (Identifier + "values").ToString();
       try {
-        byte[] array = Convert.FromBase64String(s);
-        s = null;
-        DateTime now = DateTime.UtcNow;
-        using (MemoryStream m = new MemoryStream(array))
-        using (GZipStream c = new GZipStream(m, CompressionMode.Decompress))
-        using (BinaryReader reader = new BinaryReader(c)) {
-          try {
-            long t = 0;
-            while (true) {
-              t += reader.ReadInt64();
-              DateTime time = DateTime.FromBinary(t);
-              if (time > now)
-                break;
-              float value = reader.ReadSingle();
-              AppendValue(value, time);
-            }
-          } catch (EndOfStreamException) { }
-        }
-      } catch { }
+        IEnumerable<SensorValue> settingsValues = SensorValue.Unpack(settings.GetValueCompressed(name));
+        foreach(SensorValue value in settingsValues)
+          AppendValue(value);
+      }
+      catch {        
+      }
       if (values.Count > 0)
         AppendValue(float.NaN, DateTime.UtcNow);
 
@@ -124,15 +98,21 @@ namespace OpenHardwareMonitor.Hardware {
     }
 
     private void AppendValue(float value, DateTime time) {
-      if (values.Count >= 2 && values.Last.Value == value && 
-        values[values.Count - 2].Value == value) {
-        values.Last = new SensorValue(value, time);
-        return;
-      } 
-
-      values.Append(new SensorValue(value, time));
+      AppendValue(new SensorValue(value, time));
     }
 
+    private void AppendValue(SensorValue value) {
+      if (enableSensorHistory) {
+        if (values.Count >= 2 && Math.Abs(values.Last.Value - value.Value) < float.Epsilon &&
+            Math.Abs(values[values.Count - 2].Value - value.Value) < float.Epsilon) {
+          values.Last = value;
+          return;
+        } 
+  
+        values.Append(value);
+      }
+    }
+    
     public IHardware Hardware {
       get { return hardware; }
     }
@@ -143,9 +123,9 @@ namespace OpenHardwareMonitor.Hardware {
 
     public Identifier Identifier {
       get {
-        return new Identifier(hardware.Identifier,
-          sensorType.ToString().ToLowerInvariant(),
-          index.ToString(CultureInfo.InvariantCulture));
+        return hardware.Identifier +
+          sensorType.ToString().ToLowerInvariant() +
+          index.ToString(CultureInfo.InvariantCulture);
       }
     }
 
@@ -158,7 +138,7 @@ namespace OpenHardwareMonitor.Hardware {
           name = value;          
         else 
           name = defaultName;
-        settings.SetValue(new Identifier(Identifier, "name").ToString(), name);
+        settings.SetValue(Identifier + "name", name);
       }
     }
 

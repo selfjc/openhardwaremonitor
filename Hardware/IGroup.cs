@@ -8,6 +8,8 @@
 	
 */
 
+using OpenHardwareMonitor.Common;
+
 namespace OpenHardwareMonitor.Hardware {
 
   internal interface IGroup {

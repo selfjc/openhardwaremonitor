@@ -8,14 +8,15 @@
 	
 */
 
-namespace OpenHardwareMonitor.Hardware.HDD {
-  using System.Collections.Generic;
-  using OpenHardwareMonitor.Collections;
+using System.Collections.Generic;
+using OpenHardwareMonitor.Collections;
+using OpenHardwareMonitor.Common;
 
+namespace OpenHardwareMonitor.Hardware.HDD {
   [NamePrefix(""), RequireSmart(0xB1), RequireSmart(0xB3), RequireSmart(0xB5),
     RequireSmart(0xB6), RequireSmart(0xB7), RequireSmart(0xBB), 
     RequireSmart(0xC3), RequireSmart(0xC7)]
-  internal class SSDSamsung : AbstractHarddrive {
+  internal class SSDSamsung : ATAStorage {
 
     private static readonly IEnumerable<SmartAttribute> smartAttributes =
       new List<SmartAttribute> {
@@ -58,8 +59,8 @@ namespace OpenHardwareMonitor.Hardware.HDD {
         }, SensorType.Data, 0, "Total Bytes Written")
     };
 
-    public SSDSamsung(ISmart smart, string name, string firmwareRevision,
+    public SSDSamsung(IATASmart smart, string name, string firmwareRevision,
       int index, ISettings settings)
-      : base(smart, name, firmwareRevision, index, smartAttributes, settings) { }
+      : base(smart, name, firmwareRevision, "ssd", index, smartAttributes, settings) { }
   }
 }

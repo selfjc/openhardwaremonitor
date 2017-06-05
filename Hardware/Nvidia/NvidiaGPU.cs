@@ -12,6 +12,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.Nvidia {
   internal class NvidiaGPU : Hardware {

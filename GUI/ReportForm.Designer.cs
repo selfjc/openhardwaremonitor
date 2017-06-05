@@ -52,6 +52,7 @@ namespace OpenHardwareMonitor.GUI {
       // sendButton
       // 
       this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.sendButton.Enabled = false;
       this.sendButton.Location = new System.Drawing.Point(472, 627);
       this.sendButton.Name = "sendButton";
       this.sendButton.Size = new System.Drawing.Size(75, 23);
@@ -85,8 +86,8 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.AutoEllipsis = true;
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(9, 39);
@@ -98,8 +99,8 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoEllipsis = true;
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(9, 505);
@@ -111,8 +112,8 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // commentPanel
       // 
-      this.commentPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.commentPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.commentPanel.BackColor = System.Drawing.SystemColors.Window;
       this.commentPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.commentPanel.Controls.Add(this.commentTextBox);
@@ -126,9 +127,9 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // reportPanel
       // 
-      this.reportPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.reportPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.reportPanel.BackColor = System.Drawing.SystemColors.Window;
       this.reportPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.reportPanel.Controls.Add(this.reportTextBox);
@@ -165,8 +166,8 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.AutoEllipsis = true;
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(9, 476);
@@ -178,8 +179,8 @@ namespace OpenHardwareMonitor.GUI {
       // 
       // emailTextBox
       // 
-      this.emailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.emailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
       this.emailTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.emailTextBox.Location = new System.Drawing.Point(188, 473);
       this.emailTextBox.Name = "emailTextBox";
@@ -194,7 +195,7 @@ namespace OpenHardwareMonitor.GUI {
       this.titleLabel.Size = new System.Drawing.Size(409, 13);
       this.titleLabel.TabIndex = 10;
       this.titleLabel.Text = "Help improve the Open Hardware Monitor by submitting a report about your hardware" +
-          ".";
+  ".";
       // 
       // ReportForm
       // 

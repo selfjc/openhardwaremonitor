@@ -9,7 +9,8 @@
 */
 
 using System;
-using System.Globalization;
+using System.Text;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware {
 
@@ -30,30 +31,37 @@ namespace OpenHardwareMonitor.Hardware {
     public string Description { get { return description; } }
 
     public float DefaultValue { get { return defaultValue; } }
+    
+    public string IdentifierName {
+      get {
+        StringBuilder b = new StringBuilder();
+        foreach(char c in name) {
+          if((c <= '\u007f') && char.IsLetterOrDigit(c))
+            b.Append(char.ToLowerInvariant(c));
+        }
+        return b.ToString();
+      }
+    }
   }
 
   internal class Parameter : IParameter {
+    private readonly Identifier identifier;
     private readonly ISensor sensor;
     private ParameterDescription description;
     private float value;
     private bool isDefault;
-    private readonly ISettings settings;
+    private readonly Settings settings;
 
     public Parameter(ParameterDescription description, ISensor sensor, 
       ISettings settings) 
     {
+      this.identifier = sensor.Identifier + "parameter" + description.IdentifierName;
       this.sensor = sensor;
       this.description = description;
-      this.settings = settings;
-      this.isDefault = !settings.Contains(Identifier.ToString());
-      this.value = description.DefaultValue;
-      if (!this.isDefault) {
-        if (!float.TryParse(settings.GetValue(Identifier.ToString(), "0"),
-          NumberStyles.Float,
-          CultureInfo.InvariantCulture,
-          out this.value))
-          this.value = description.DefaultValue;
-      }
+      this.settings = new Settings(settings);
+      this.isDefault = !this.settings.Contains(Identifier);
+      this.value = this.isDefault ? description.DefaultValue : 
+        this.settings.GetValue(Identifier, description.DefaultValue);
     }
 
     public ISensor Sensor {
@@ -63,10 +71,7 @@ namespace OpenHardwareMonitor.Hardware {
     }
 
     public Identifier Identifier {
-      get {
-        return new Identifier(sensor.Identifier, "parameter",
-          Name.Replace(" ", "").ToLowerInvariant());
-      }
+      get { return identifier; }
     }
 
     public string Name { get { return description.Name; } }
@@ -77,12 +82,6 @@ namespace OpenHardwareMonitor.Hardware {
       get {
         return value;
       }
-      set {
-        this.isDefault = false;
-        this.value = value;
-        this.settings.SetValue(Identifier.ToString(), value.ToString(
-          CultureInfo.InvariantCulture));
-      }
     }
 
     public float DefaultValue { 
@@ -91,15 +90,20 @@ namespace OpenHardwareMonitor.Hardware {
 
     public bool IsDefault {
       get { return isDefault; }
-      set {
-        this.isDefault = value;
-        if (value) {
-          this.value = description.DefaultValue;
-          this.settings.Remove(Identifier.ToString());
-        }
-      }
     }
 
+    public void SetValue(float value) {
+      isDefault = false;
+      this.value = value;
+      settings.SetValue(Identifier, value);      
+    }
+    
+    public void SetDefault() {
+      isDefault = true;
+      value = description.DefaultValue;
+      settings.Remove(Identifier);
+    }
+    
     public void Accept(IVisitor visitor) {
       if (visitor == null)
         throw new ArgumentNullException("visitor");

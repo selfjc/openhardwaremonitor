@@ -9,9 +9,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Utilities;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.GUI {
   public class UserOption {
@@ -19,15 +18,15 @@ namespace OpenHardwareMonitor.GUI {
     private bool value;
     private MenuItem menuItem;
     private event EventHandler changed;
-    private PersistentSettings settings;
+    private UISettings settings;
 
     public UserOption(string name, bool value,
-      MenuItem menuItem, PersistentSettings settings) {
+      MenuItem menuItem, ISettings settings) {
 
-      this.settings = settings;
+      this.settings = new UISettings(settings);
       this.name = name;
       if (name != null)
-        this.value = settings.GetValue(name, value);
+        this.value = this.settings.GetValue(name, value);
       else
         this.value = value;
       this.menuItem = menuItem;

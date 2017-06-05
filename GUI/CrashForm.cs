@@ -22,6 +22,7 @@ namespace OpenHardwareMonitor.GUI {
 
     public CrashForm() {
       InitializeComponent();
+      sendButton.Enabled = false;
     }
 
     public Exception Exception {

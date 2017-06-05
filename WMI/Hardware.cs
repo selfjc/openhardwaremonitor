@@ -5,34 +5,67 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
   Copyright (C) 2009-2010 Paul Werelds <paul@werelds.net>
+  Copyright (C) 2017 Alexander Thulcke <alexth4ef9@gmail.com>
 	
 */
 
-
+using System.Collections.Generic;
 using System.Management.Instrumentation;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.WMI {
-  [InstrumentationClass(InstrumentationType.Instance)]
-  public class Hardware : IWmiObject {
-    #region WMI Exposed
+  [ManagementEntity]
+  public class Hardware : Element {
+    private readonly IHardware hardware;
     
-    public string HardwareType { get; private set; }
-    public string Identifier { get; private set; }
+    #region WMI Exposed    
+    [ManagementProbe]
     public string Name { get; private set; }
-    public string Parent { get; private set; }
-
+    [ManagementProbe]
+    public string HardwareType { get; private set; }
+    [ManagementProbe]
+    [ManagementReference(Type="Hardware")]
+    public string[] SubHardware { 
+      get { return subHardware.ToArray(); }
+    }
+    [ManagementProbe]
+    [ManagementReference(Type="Sensor")]
+    public string[] Sensors { 
+      get { return sensors.ToArray(); }
+    }
+    [ManagementTask]
+    public string GetReport() {
+      return hardware.GetReport();
+    }
     #endregion
 
-    public Hardware(IHardware hardware) {
+    private readonly List<string> subHardware = new List<string>();
+    private readonly List<string> sensors = new List<string>();
+    
+    internal Hardware(IHardware hardware) : base(hardware.Identifier) {
+      this.hardware = hardware;
       Name = hardware.Name;
-      Identifier = hardware.Identifier.ToString();
       HardwareType = hardware.HardwareType.ToString();
-      Parent = (hardware.Parent != null)
-        ? hardware.Parent.Identifier.ToString()
-        : "";
     }
-
-    public void Update() { }
+    
+    internal override void AddChild(Element child) {
+      if (child is Hardware) {
+        child.Parent = Identifier;
+        subHardware.Add(child.ManagementPath);
+      } else if (child is Sensor) {
+        child.Parent = Identifier;
+        sensors.Add(child.ManagementPath);
+      } else
+        base.AddChild(child);
+    } 
+    
+    internal override void RemoveChild(Element child) {
+      if (child is Hardware)
+        subHardware.Remove(child.ManagementPath);
+      else if (child is Sensor)
+        sensors.Remove(child.ManagementPath);
+      else
+        base.RemoveChild(child);
+    }   
   }
 }

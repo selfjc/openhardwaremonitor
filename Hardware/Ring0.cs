@@ -18,6 +18,7 @@ using System.Text;
 
 namespace OpenHardwareMonitor.Hardware {
   internal static class Ring0 {
+    private const string DriverId = "WinRing0_1_2_0";
 
     private static KernelDriver driver;
     private static string fileName;
@@ -49,8 +50,20 @@ namespace OpenHardwareMonitor.Hardware {
       return typeof(Ring0).Assembly;
     }
 
+    private static string GetDriverFileName() {
+      string location = GetAssembly().Location;
+      return !string.IsNullOrEmpty(location) ? Path.ChangeExtension(location, ".sys") : null;
+    }
+        
+    private static bool IsDriverInstalled() {
+      string driverFile = GetDriverFileName();
+      if (driverFile == null)
+        return false;
+      string stateFile = Path.ChangeExtension(driverFile, ".InstallState");
+      return File.Exists(driverFile) && File.Exists(stateFile);
+    }
+
     private static string GetTempFileName() {
-      
       // try to create one in the application folder
       string location = GetAssembly().Location;
       if (!string.IsNullOrEmpty(location)) {        
@@ -136,13 +149,16 @@ namespace OpenHardwareMonitor.Hardware {
       if (driver != null)
         return;
 
+      // check if driver is permanent installed
+      bool installed = IsDriverInstalled();
+
       // clear the current report
       report.Length = 0;
-     
-      driver = new KernelDriver("WinRing0_1_2_0");
+
+      driver = new KernelDriver(DriverId);
       driver.Open();
 
-      if (!driver.IsOpen) {
+      if (!driver.IsOpen && !installed) {
         // driver is not loaded, try to install and open
 
         fileName = GetTempFileName();
@@ -157,7 +173,7 @@ namespace OpenHardwareMonitor.Hardware {
             }
           } else {
             string errorFirstInstall = installError;
-   
+
             // install failed, try to delete and reinstall
             driver.Delete();
 
@@ -186,8 +202,8 @@ namespace OpenHardwareMonitor.Hardware {
         }
 
         try {
-          // try to delte the driver file
-          if (File.Exists(fileName))
+          // try to delete the driver file
+          if (!installed && File.Exists(fileName))
             File.Delete(fileName);
           fileName = null;
         } catch (IOException) { } 
@@ -215,12 +231,15 @@ namespace OpenHardwareMonitor.Hardware {
       if (driver == null)
         return;
 
+      // check if driver is permanent installed
+      bool installed = IsDriverInstalled();
+
       uint refCount = 0;
       driver.DeviceIOControl(IOCTL_OLS_GET_REFCOUNT, null, ref refCount);
 
       driver.Close();
 
-      if (refCount <= 1)
+      if (!installed && refCount <= 1)
         driver.Delete();
 
       driver = null;
@@ -231,13 +250,57 @@ namespace OpenHardwareMonitor.Hardware {
       }
 
       // try to delete temporary driver file again if failed during open
-      if (fileName != null && File.Exists(fileName)) {
+      if (!installed && fileName != null && File.Exists(fileName)) {
         try {
           File.Delete(fileName);
           fileName = null;
         } catch (IOException) { } 
           catch (UnauthorizedAccessException) { }
       }
+    }
+
+    public static string DriverName {
+      get { return DriverId; }
+    }
+
+    public static bool InstallDriver(out string installError) {
+      installError = string.Empty;
+      // no implementation for unix systems
+      int p = (int)Environment.OSVersion.Platform;
+      if ((p == 4) || (p == 128))
+        return false;  
+
+      KernelDriver driver = new KernelDriver(DriverId);
+
+      string fileName = GetDriverFileName();
+      if (fileName != null && ExtractDriver(fileName))
+        if (driver.Install(fileName, out installError))
+          return true;
+        
+      return false;
+    }
+
+    public static bool UninstallDriver() {
+      // no implementation for unix systems
+      int p = (int)Environment.OSVersion.Platform;
+      if ((p == 4) || (p == 128))
+        return false;  
+
+      KernelDriver driver = new KernelDriver(DriverId);
+      driver.Delete();
+
+      string fileName = GetDriverFileName();
+
+      if (fileName != null && File.Exists(fileName)) {
+        try {
+          File.Delete(fileName);
+          fileName = null;
+          return true;
+        } catch (IOException) { } 
+          catch (UnauthorizedAccessException) { }
+      }
+
+      return false;
     }
 
     public static string GetReport() {

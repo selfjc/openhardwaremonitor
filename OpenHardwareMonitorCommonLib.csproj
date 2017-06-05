@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{9C47E7E1-B593-4F9B-9B72-0F5091B0F511}</ProjectGuid>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OpenHardwareMonitor</RootNamespace>
+    <AssemblyName>OpenHardwareMonitorCommonLib</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkProfile />
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1607</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <BaseAddress>4194304</BaseAddress>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\IReadOnlyArray.cs" />
+    <Compile Include="Collections\ListSet.cs" />
+    <Compile Include="Collections\Pair.cs" />
+    <Compile Include="Collections\ReadOnlyArray.cs" />
+    <Compile Include="Collections\RingCollection.cs" />
+    <Compile Include="Common\UpdateVisitor.cs" />
+    <Compile Include="Common\EmptySettings.cs" />
+    <Compile Include="Common\IComputer.cs" />
+    <Compile Include="Common\IControl.cs" />
+    <Compile Include="Common\Identifier.cs" />
+    <Compile Include="Common\IElement.cs" />
+    <Compile Include="Common\IHardware.cs" />
+    <Compile Include="Common\IParameter.cs" />
+    <Compile Include="Common\ISensor.cs" />
+    <Compile Include="Common\ISettings.cs" />
+    <Compile Include="Common\IVisitable.cs" />
+    <Compile Include="Common\IVisitor.cs" />
+    <Compile Include="Common\SensorVisitor.cs" />
+    <Compile Include="Common\Settings.cs" />
+    <Compile Include="Common\ShuffleStream.cs" />
+    <Compile Include="Common\UnshuffleStream.cs" />
+    <Compile Include="Properties\AssemblyCommonLibInfo.cs" />
+    <Compile Include="Properties\AssemblyVersion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

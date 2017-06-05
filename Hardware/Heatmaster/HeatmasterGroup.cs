@@ -16,6 +16,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using Microsoft.Win32;
+using OpenHardwareMonitor.Common;
 
 namespace OpenHardwareMonitor.Hardware.Heatmaster {
   internal class HeatmasterGroup : IGroup {

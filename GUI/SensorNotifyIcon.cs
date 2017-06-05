@@ -15,12 +15,13 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using OpenHardwareMonitor.Hardware;
+using OpenHardwareMonitor.Common;
 using OpenHardwareMonitor.Utilities;
 
 namespace OpenHardwareMonitor.GUI {
   public class SensorNotifyIcon : IDisposable {
 
+    private UISettings settings;
     private UnitManager unitManager;
 
     private ISensor sensor;
@@ -36,8 +37,9 @@ namespace OpenHardwareMonitor.GUI {
     private Font smallFont;
 
     public SensorNotifyIcon(SystemTray sensorSystemTray, ISensor sensor,
-      bool balloonTip, PersistentSettings settings, UnitManager unitManager) 
+      bool balloonTip, ISettings settings, UnitManager unitManager) 
     {
+      this.settings = new UISettings(settings);
       this.unitManager = unitManager;
       this.sensor = sensor;
       this.notifyIcon = new NotifyIconAdv();
@@ -49,8 +51,7 @@ namespace OpenHardwareMonitor.GUI {
       {
         defaultColor = Color.FromArgb(0xff, 0x70, 0x8c, 0xf1);
       }
-      Color = settings.GetValue(new Identifier(sensor.Identifier, 
-        "traycolor").ToString(), defaultColor);      
+      Color = this.settings.GetValue(sensor.Identifier + "traycolor", defaultColor);      
       
       this.pen = new Pen(Color.FromArgb(96, Color.Black));
 
@@ -72,8 +73,7 @@ namespace OpenHardwareMonitor.GUI {
         dialog.Color = Color;
         if (dialog.ShowDialog() == DialogResult.OK) {
           Color = dialog.Color;
-          settings.SetValue(new Identifier(sensor.Identifier,
-            "traycolor").ToString(), Color);
+          this.settings.SetValue(sensor.Identifier + "traycolor", Color);
         }
       };
       contextMenu.MenuItems.Add(colorItem);
