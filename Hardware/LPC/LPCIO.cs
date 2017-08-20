@@ -223,6 +223,13 @@ namespace OpenHardwareMonitor.Hardware.LPC {
               logicalDeviceNumber = WINBOND_NUVOTON_HARDWARE_MONITOR_LDN;
               break;
           } break;
+        case 0xD4:
+          switch (revision) {
+            case 0x23:
+              chip = Chip.NCT6796D;
+              logicalDeviceNumber = WINBOND_NUVOTON_HARDWARE_MONITOR_LDN;
+              break;
+          } break;
       }
       if (chip == Chip.Unknown) {
         if (id != 0 && id != 0xff) {
@@ -241,7 +248,7 @@ namespace OpenHardwareMonitor.Hardware.LPC {
         ushort vendorID = port.ReadWord(FINTEK_VENDOR_ID_REGISTER);
 
         // disable the hardware monitor i/o space lock on NCT679*D chips
-        if (address == verify && (chip == Chip.NCT6791D || chip == Chip.NCT6793D || chip == Chip.NCT6795D)) {
+        if (address == verify && (chip == Chip.NCT6791D || chip == Chip.NCT6793D || chip == Chip.NCT6795D || chip == Chip.NCT6796D)) {
           port.NuvotonDisableIOSpaceLock();
         }
 
@@ -293,6 +300,7 @@ namespace OpenHardwareMonitor.Hardware.LPC {
           case Chip.NCT6791D:
           case Chip.NCT6793D:
           case Chip.NCT6795D:
+          case Chip.NCT6796D:
             superIOs.Add(new NCT677X(chip, revision, address, port));
             break;
           case Chip.F71858:
