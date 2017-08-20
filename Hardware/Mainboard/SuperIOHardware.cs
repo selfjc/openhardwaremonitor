@@ -183,6 +183,7 @@ namespace OpenHardwareMonitor.Hardware.Mainboard {
         case Chip.IT8718F:
         case Chip.IT8720F:
         case Chip.IT8726F:
+        case Chip.IT8686E:
           GetITEConfigurationsA(superIO, manufacturer, model, v, t, f, c,
             ref readFan, ref postUpdate, ref mutex);
           break;
