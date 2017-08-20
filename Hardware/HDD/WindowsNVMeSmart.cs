@@ -433,8 +433,7 @@ namespace OpenHardwareMonitor.Hardware.HDD {
           return new NVMeInfoImpl(driveNumber, data, rawData, nspace, rawDataNamespace);
         }
         return new NVMeInfoImpl(driveNumber, data, rawData);
-      } catch(Win32Exception e) {
-        Console.WriteLine(e);
+      } catch(Win32Exception) {
       }
       return null;
     }
